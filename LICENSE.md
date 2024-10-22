@@ -17,7 +17,7 @@ Redistribution and use in source and binary forms, with or without modification,
 
 ## 2. License for Assets (Images, Design Kit, Mockups)
 
-### Copyright © [Year] ScribbleLabApp LLC. All Rights Reserved.
+### Copyright © 2024 ScribbleLabApp LLC. All Rights Reserved.
 
 All assets, including but not limited to images, design kits, mockups, and other visual media, are proprietary to ScribbleLabApp LLC. The use, reproduction, distribution, or modification of these assets is prohibited without explicit written permission from ScribbleLabApp LLC.
 
