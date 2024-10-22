@@ -1,0 +1,3 @@
+[submodule "toolchain/gyb"]
+	path = toolchain/gyb
+	url = git@github.com:ScribbleLabApp/scribble-gyb.git
