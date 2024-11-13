@@ -147,6 +147,7 @@
     
     7.5 [Where to Document]()
 
+<!--
 8. [Implementation of ScribbleLabApp's Styling Guide]()
 
     8.1 [SwiftLint]()
@@ -156,6 +157,7 @@
     8.3 [ES-Lint]()
 
     8.4 [Prettier]()
+-->
 
 ## 1. Source File Basics
 
@@ -1635,3 +1637,815 @@ Apple’s documentation on [delegates and data sources](https://developer.apple.
 ## 6. Programming Practices
 
 Common themes among the rules in this section are: avoid redundancy, avoid ambiguity, and prefer implicitness over explicitness unless being explicit improves readability and/or reduces ambiguity.
+
+### 6.1 Avoiding Redundancy
+
+Redundancy in code can lead to maintenance challenges and potential errors. Strive to write concise and clear code by eliminating unnecessary repetition.
+
+⛔️ <ins>Bad:</ins>
+
+```swift
+if isUserLoggedIn == true {
+  // Perform action
+}
+```
+
+✅ <ins>Good:</ins>
+
+```swift
+if isUserLoggedIn {
+  // Perform action
+}
+```
+
+In the example above, the comparison to `true` is redundant. The condition `if isUserLoggedIn` is sufficient and more readable.
+
+### 6.2 Avoid Ambiguity
+
+Ambiguous code can be difficult to understand and maintain. Ensure that your code is clear and unambiguous.
+
+⛔️ <ins>Bad:</ins>
+
+```swift
+let data = fetchData()
+process(data)
+```
+
+✅ <ins>Good:</ins>
+
+```swift
+let userData = fetchUserData()
+process(userData)
+```
+
+In the example above, renaming `data` to `userData` clarifies what type of data is being fetched and processed, reducing ambiguity.
+
+### 6.3 Prefer Implicitness Over Explicitness
+
+Implicit code can often be more readable and concise. However, if being explicit improves readability or reduces ambiguity, prefer explicitness.
+
+1️⃣ <ins>First choice: (Implicit)</ins>
+
+```swift
+let result = calculateResult()
+```
+
+2️⃣ <ins>Last choice: (Explicit)</ins>
+
+```swift
+let result: Int = calculateResult()
+```
+
+In the example above, the type annotation `: Int` is redundant because Swift can infer the type from the return type of `calculateResult()`.
+
+### 6.4 Use Guard Statements for Early Exit
+
+Using `guard` statements for early exits can improve readability by reducing nested code.
+
+⛔️ <ins>Bad:</ins>
+
+```swift
+func processUser(_ user: User?) {
+  if let user = user {
+    // Process user
+  } else {
+    return
+  }
+}
+```
+
+✅ <ins>Good:</ins>
+
+```swift
+func processUser(_ user: User?) {
+  guard let user = user else { return }
+  // Process user
+}
+```
+
+In the example above, the `guard` statement provides a clear and concise way to handle the optional `user` and exit early if it is `nil`.
+
+### 6.5 Use Single-Line Closures for Simple Expressions
+
+For simple expressions, single-line closures can improve readability. However, for more complex logic, use multi-line closures.
+
+⛔️ <ins>Bad:</ins>
+
+```swift
+let squares = numbers.map { number in
+  return number * number
+}
+```
+
+✅ <ins>Good:</ins>
+
+```swift
+let squares = numbers.map { $0 * $0 }
+```
+
+In the example above, the single-line closure is more concise and readable for this simple expression.
+
+### 6.6 Use Multi-Line Statements for Complex Logic
+
+When dealing with complex logic, use multi-line statements to improve readability.
+
+⛔️ <ins>Bad:</ins>
+
+```swift
+if someCondition { performAction() }
+```
+
+✅ <ins>Good:</ins>
+
+```swift
+if someCondition {
+  performAction()
+}
+```
+
+In the example above, using a multi-line statement makes it easier to read and understand the condition and the action being performed.
+
+### 6.7 Compiler Warnings
+
+Treat compiler warnings as errors. Address all warnings promptly to maintain code quality and prevent potential issues.
+
+⛔️ <ins>Bad:</ins>
+
+```swift
+// Ignoring compiler warnings
+let unusedVariable = 42
+```
+
+Ignoring compiler warnings can lead to potential issues in your code. It's important to address them to ensure your code is clean and free of potential bugs.
+
+✅ <ins>Good:</ins>
+
+```swift
+// Addressing compiler warnings
+let importantValue = 42
+```
+
+In the example above, addressing compiler warnings ensures that the code is clean and free of potential issues. To treat warnings as errors, you can use the `-warnings-as-errors` flag in your build settings. This will cause the compiler to treat any warnings as errors, forcing you to address them before your code can compile successfully.
+
+To enable this in Xcode:
+
+1. Go to your project settings.
+2. Select the "Build Settings" tab.
+3. Search for "Treat Warnings as Errors".
+4. Set it to `Yes`.
+
+Alternatively, you can add the following flag to your `swiftc` command if you are using the command line:
+
+```sh
+swiftc -warnings-as-errors MyFile.swift
+```
+
+By treating warnings as errors, you ensure that your codebase remains clean and maintainable, preventing potential issues from slipping through.
+
+### 6.8 Initializers
+
+Ensure initializers are clear and concise. Use convenience initializers where appropriate to simplify object creation.
+
+⛔️ <ins>Bad:</ins>
+
+```swift
+class User {
+  var name: String
+  var age: Int
+
+  init(name: String, age: Int) {
+    self.name = name
+    self.age = age
+  }
+}
+```
+
+✅ <ins>Good:</ins>
+
+```swift
+class User {
+  var name: String
+  var age: Int
+
+  init(name: String, age: Int) {
+    self.name = name
+    self.age = age
+  }
+
+  convenience init(name: String) {
+    self.init(name: name, age: 0)
+  }
+}
+```
+
+In the example above, the convenience initializer simplifies object creation when the age is not provided.
+
+### 6.9 Properties
+
+Use computed properties and property observers to encapsulate logic related to property values.
+
+⛔️ <ins>Bad:</ins>
+
+```swift
+class Circle {
+  var radius: Double
+  var diameter: Double {
+    return radius * 2
+  }
+
+  init(radius: Double) {
+    self.radius = radius
+  }
+}
+```
+
+✅ <ins>Good:</ins>
+
+```swift 
+class Circle {
+  var radius: Double {
+    didSet {
+      diameter = radius * 2
+    }
+  }
+  var diameter: Double
+
+  init(radius: Double) {
+    self.radius = radius
+    self.diameter = radius * 2
+  }
+}
+```
+
+In the example above, the property observer ensures that the diameter is always updated when the radius changes.
+
+### 6.10 Types with Shorthand Names
+
+Avoid using shorthand names for types unless they are widely understood and accepted.
+
+⛔️ <ins>Bad:</ins>
+
+```swift
+typealias Num = Int
+```
+
+✅ <ins>Good:</ins>
+
+```swift
+typealias Coordinate = (x: Int, y: Int)
+```
+
+In the example above, using a descriptive type alias improves code readability.
+
+### 6.11 Optional Types
+
+Use optional types judiciously. Avoid force unwrapping and prefer safe unwrapping techniques like `if let` and `guard let`.
+
+⛔️ <ins>Bad:</ins>
+
+```swift
+let name: String? = "John"
+print(name!)
+```
+
+✅ <ins>Good:</ins>
+
+```swift
+let name: String? = "John"
+if let unwrappedName = name {
+  print(unwrappedName)
+}
+```
+
+In the example above, safe unwrapping prevents potential runtime crashes.
+
+### 6.12 Error Types
+
+Define custom error types for better error handling and clarity.
+
+⛔️ <ins>Bad:</ins>
+
+```swift
+enum NetworkError: Error {
+  case unknown
+}
+```
+
+✅ <ins>Good:</ins>
+
+```swift
+enum NetworkError: Error {
+  case invalidURL
+  case noInternetConnection
+  case serverError
+}
+```
+
+In the example above, defining specific error cases improves error handling and clarity.
+
+### 6.13 Force Unwrapping and Force Casts
+
+Avoid force unwrapping and force casts. Use safe unwrapping and casting techniques to prevent runtime crashes.
+
+⛔️ <ins>Bad:</ins>
+
+```swift
+let value: Any = "Hello"
+let stringValue = value as! String
+```
+
+✅ <ins>Good:</ins>
+
+```swift
+let value: Any = "Hello"
+if let stringValue = value as? String {
+  print(stringValue)
+}
+```
+
+In the example above, safe casting prevents potential runtime crashes.
+
+### 6.14 Implicitly Unwrapped Optionals
+
+Use implicitly unwrapped optionals sparingly and only when you are certain the value will not be `nil`.
+
+⛔️ <ins>Bad:</ins>
+
+```swift
+var name: String!
+name = "John"
+print(name)
+```
+
+✅ <ins>Good:</ins>
+
+```swift
+var name: String? = "John"
+if let unwrappedName = name {
+  print(unwrappedName)
+}
+```
+
+In the example above, using a regular optional with safe unwrapping is safer and more predictable.
+
+### 6.15 Access Levels
+
+Use appropriate access levels to encapsulate and protect your code. Prefer the most restrictive access level that still allows your code to function as intended.
+
+⛔️ <ins>Bad:</ins>
+
+```swift
+public class User {
+  public var name: String
+  public var age: Int
+
+  public init(name: String, age: Int) {
+    self.name = name
+    self.age = age
+  }
+}
+```
+
+✅ <ins>Good:</ins>
+
+```swift
+class User {
+  var name: String
+  var age: Int
+
+  init(name: String, age: Int) {
+    self.name = name
+    self.age = age
+  }
+}
+```
+
+✅ <ins>Good:</ins>
+
+```swift
+internal class User {
+  var name: String
+  var age: Int
+
+  init(name: String, age: Int) {
+    self.name = name
+    self.age = age
+  }
+}
+```
+
+In the example above, using the default access level (`internal`) encapsulates the `User` class and its properties.
+
+### 6.16 Nesting and Namespacing
+
+Use nesting and namespacing to organize your code logically and improve readability.
+
+⛔️ <ins>Not ideal:</ins>
+
+```swift
+struct Address {
+  var street: String
+  var city: String
+  var state: String
+  var zipCode: String
+}
+
+struct User {
+  var name: String
+  var address: Address
+}
+```
+
+✅ <ins>Good:</ins>
+
+```swift
+struct User {
+  struct Address {
+    var street: String
+    var city: String
+    var state: String
+    var zipCode: String
+  }
+
+  var name: String
+  var address: Address
+}
+```
+
+In the example above, nesting the `Address` struct within the `User` struct improves organization and readability.
+
+### 6.17 Guards for Early Exits
+
+Use `guard` statements for early exits to reduce nesting and improve code clarity.
+
+⛔️ <ins>Bad:</ins>
+
+```swift
+func processUser(_ user: User?) {
+  if let user = user {
+    // Process user
+  } else {
+    return
+  }
+}
+```
+
+✅ <ins>Good:</ins>
+
+```swift
+func processUser(_ user: User?) {
+  guard let user = user else { return }
+  // Process user
+}
+```
+
+In the example above, the `guard` statement provides a clear and concise way to handle the optional `user` and exit early if it is `nil`.
+
+### 6.18 For-Where Loops
+
+Use `for-where` loops to filter elements within the loop declaration, improving readability and reducing the need for nested `if` statements.
+
+⛔️ <ins>Not ideal:</ins>
+
+```swift
+for number in numbers {
+  if number % 2 == 0 {
+    print(number)
+  }
+}
+```
+
+✅ <ins>Good:</ins>
+
+```swift
+for number in numbers where number % 2 == 0 {
+  print(number)
+}
+```
+
+In the example above, the `for-where` loop simplifies the code by filtering elements within the loop declaration.
+
+### 6.19 Fallthrough in Switch Statements
+
+Avoid using `fallthrough` in switch statements. Use explicit cases to handle multiple conditions.
+
+⛔️ <ins>Bad:</ins>
+
+```swift
+switch value {
+case 1:
+  print("One")
+  fallthrough
+case 2:
+  print("Two")
+default:
+  print("Other")
+}
+```
+
+✅ <ins>Good:</ins>
+
+```swift
+switch value {
+case 1:
+  print("One")
+case 2:
+  print("Two")
+default:
+  print("Other")
+}
+```
+
+In the example above, using explicit cases improves readability and avoids unintended behavior.
+
+### 6.20 Pattern Matching
+
+Use pattern matching to simplify complex conditional logic and improve readability.
+
+⛔️ <ins>Bad:</ins>
+
+```swift
+if case .success(let value) = result {
+  print(value)
+} else if case .failure(let error) = result {
+  print(error)
+}
+```
+
+✅ <ins>Good:</ins>
+
+```swift
+switch result {
+case .success(let value):
+  print(value)
+case .failure(let error):
+  print(error)
+}
+```
+
+In the example above, using pattern matching with a `switch` statement simplifies the conditional logic.
+
+### 6.21 Tuple Patterns
+
+Use tuple patterns to destructure and match multiple values in a single statement.
+
+⛔️ <ins>Bad:</ins>
+
+```swift
+let point = (x: 1, y: 2)
+let x = point.x
+let y = point.y
+print(x, y)
+```
+
+✅ <ins>Good:</ins>
+
+```swift
+let point = (x: 1, y: 2)
+let (x, y) = point
+print(x, y)
+```
+
+In the example above, using a tuple pattern simplifies the code by destructuring the tuple in a single statement.
+
+### 6.22 Numeric and String Literals
+
+Use numeric and string literals appropriately. Avoid magic numbers and strings by defining constants.
+
+⛔️ <ins>Bad:</ins>
+
+```swift
+let pi = 3.14159
+let greeting = "Hello, World!"
+```
+
+✅ <ins>Good:</ins>
+
+```swift
+let pi: Double = 3.14159
+let greeting: String = "Hello, World!"
+```
+
+In the example above, using type annotations with literals improves code clarity.
+
+### 6.23 Playground Literals
+
+Use playground literals for quick prototyping and visualization in Swift Playgrounds.
+
+⛔️ <ins>Bad:</ins>
+
+```swift
+let color = UIColor(red: 0.5, green: 0.5, blue: 0.5, alpha: 1.0)
+```
+
+✅ <ins>Good:</ins>
+
+```swift
+let color = #colorLiteral(red: 0.5, green: 0.5, blue: 0.5, alpha: 1.0)
+```
+
+In the example above, using a playground literal simplifies color creation and visualization.
+
+### 6.24 Trapping vs. Overflowing Arithmetic
+
+Prefer trapping arithmetic operations to detect and handle overflow errors.
+
+⛔️ <ins>Bad:</ins>
+
+```swift
+let result = Int.max &+ 1
+```
+
+✅ <ins>Good:</ins>
+
+```swift
+let result = Int.max + 1 // This will cause a runtime error
+```
+
+In the example above, using trapping arithmetic operations helps detect overflow errors.
+
+### 6.25 Defining New Operators
+
+Define new operators sparingly and only when they improve code readability and maintainability.
+
+⛔️ <ins>Bad:</ins>
+
+```swift
+infix operator **: MultiplicationPrecedence
+func ** (lhs: Int, rhs: Int) -> Int {
+  return Int(pow(Double(lhs), Double(rhs)))
+}
+```
+
+✅ <ins>Good:</ins>
+
+```swift
+/// Defines a new operator for exponentiation.
+///
+/// This operator allows for more readable mathematical 
+/// expressions when performing exponentiation.
+///
+/// - Parameters:
+///   - lhs: The base integer.
+///   - rhs: The exponent integer.
+/// - Returns: The result of raising `lhs` to the power of `rhs`.
+infix operator **: MultiplicationPrecedence
+func ** (lhs: Int, rhs: Int) -> Int {
+  return Int(pow(Double(lhs), Double(rhs)))
+}
+```
+
+In the example above, defining a new operator for exponentiation can improve readability in mathematical expressions. The `**` operator is defined with `MultiplicationPrecedence` to ensure it behaves as expected in mathematical expressions. The documentation comment provides clear information about the operator's purpose and usage.
+
+### 6.26 Overloading Existing Operators
+
+Overload existing operators judiciously. Ensure that the overloaded operators maintain their expected behavior and semantics.
+
+⛔️ <ins>Bad:</ins>
+
+```swift
+func + (lhs: String, rhs: String) -> String {
+  return lhs + " " + rhs
+}
+```
+
+✅ <ins>Good:</ins>
+
+```swift
+func + (lhs: String, rhs: String) -> String {
+  return lhs + rhs
+}
+```
+
+In the example above, overloading the `+` operator to concatenate strings without adding extra spaces maintains the expected behavior of the operator.
+
+
+
+## 7. Documentation Comments
+
+Proper documentation comments are essential for maintaining clear and understandable code. This section outlines the guidelines for writing documentation comments using Swift's `///` DocC style comments.
+
+### 7.1 General Format
+
+Use `///` to start a documentation comment. Ensure that comments are clear, concise, and provide valuable information about the code.
+
+⛔️ <ins>Bad:</ins>
+
+```swift
+/// This function does something
+func doSomething() {
+  // ...
+}
+```
+
+✅ <ins>Good:</ins>
+
+```swift
+/// Performs a specific action based on the provided parameters.
+///
+/// - Parameters:
+///   - parameter1: The first parameter needed for the action.
+///   - parameter2: The second parameter needed for the action.
+func performAction(parameter1: String, parameter2: Int) {
+  // ...
+}
+```
+
+### 7.2 Single-Sentence Summary
+
+Begin with a single-sentence summary that succinctly describes the purpose of the function or type.
+
+⛔️ <ins>Bad:</ins>
+
+```swift
+/// Function to add two numbers
+func add(a: Int, b: Int) -> Int {
+  return a + b
+}
+```
+
+✅ <ins>Good:</ins>
+
+```swift
+/// Adds two integers and returns the result.
+func add(a: Int, b: Int) -> Int {
+  return a + b
+}
+```
+
+### 7.3 Parameter, Returns, and Throws Tags
+
+Use `- Parameters:`, `- Returns:`, and `- Throws:` tags to describe the function's parameters, return value, and any errors it might throw.
+
+⛔️ <ins>Bad:</ins>
+
+```swift
+/// Calculates the area of a rectangle
+func area(width: Double, height: Double) -> Double {
+  return width * height
+}
+```
+
+✅ <ins>Good:</ins>
+
+```swift
+/// Calculates the area of a rectangle.
+///
+/// - Parameters:
+///   - width: The width of the rectangle.
+///   - height: The height of the rectangle.
+/// - Returns: The area of the rectangle.
+func area(width: Double, height: Double) -> Double {
+  return width * height
+}
+```
+
+### 7.4 Apple’s Markup Format
+
+Follow Apple's markup format for documentation comments to ensure compatibility with Xcode's documentation rendering.
+
+⛔️ <ins>Bad:</ins>
+
+```swift
+/// Function to fetch user data
+func fetchUserData() -> User {
+  // ...
+}
+```
+
+✅ <ins>Good:</ins>
+
+```swift
+/// Fetches user data from the server.
+///
+/// - Returns: A `User` object containing the fetched data.
+/// - Throws: An error of type `NetworkError` if the fetch fails.
+func fetchUserData() throws -> User {
+  // ...
+}
+```
+
+### 7.5 Where to Document
+
+Document all public and internal functions, properties, and types. Private functions and properties can be documented at your discretion, especially if they contain complex logic.
+
+⛔️ <ins>Bad:</ins>
+
+```swift
+private func complexCalculation() -> Double {
+  // Complex logic
+}
+```
+
+✅ <ins>Good:</ins>
+
+```swift
+/// Performs a complex calculation and returns the result.
+///
+/// This function uses advanced mathematical operations to compute the result.
+///
+/// - Returns: The result of the complex calculation as a `Double`.
+private func complexCalculation() -> Double {
+  // Complex logic
+}
+```
