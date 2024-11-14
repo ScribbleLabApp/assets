@@ -34,23 +34,23 @@
 
     3.1 [Column Limit](#31-column-limit)
 
-    3.1 [Braces](#32-braces)
+    3.2 [Braces](#32-braces)
     
-    3.1 [Semicolons](#33-semicolons)
+    3.3 [Semicolons](#33-semicolons)
     
-    3.1 [One Statement Per Line](#34-one-statement-per-line)
+    3.4 [One Statement Per Line](#34-one-statement-per-line)
     
-    3.1 [Line-Wrapping](#35-line-wrapping)
+    3.5 [Line-Wrapping](#35-line-wrapping)
         
-    3.1.1 [Function Declarations](#351-function-declarations)
+    3.5.1 [Function Declarations](#351-function-declarations)
         
-    3.1.2 [Type and Extension Declarations](#352-type-and-extension-declarations)
+    3.5.2 [Type and Extension Declarations](#352-type-and-extension-declarations)
         
-    3.1.3 [Function Calls](#353-function-calls)
+    3.5.3 [Function Calls](#353-function-calls)
         
-    3.1.4 [Control Flow Statements](#354-control-flow-statements)
+    3.5.4 [Control Flow Statements](#354-control-flow-statements)
         
-    3.1.5 [Other Expressions](#355-other-expressions)
+    3.5.5 [Other Expressions](#355-other-expressions)
 
     - [Horizontal Whitespace](#36-horizontal-whitespace)
     - [Horizontal Alignment](#37-horizontal-alignment)
@@ -95,57 +95,57 @@
 
 6. [Programming Practices](#6-programming-practices)
     
-    6.1 [Compiler Warnings]()
+    6.1 [Compiler Warnings](#67-compiler-warnings)
     
-    6.2 [Initializers]()
+    6.2 [Initializers](#68-initializers)
     
-    6.3 [Properties]()
+    6.3 [Properties](#69-properties)
     
-    6.4 [Types with Shorthand Names]()
+    6.4 [Types with Shorthand Names](#610-types-with-shorthand-names)
     
-    6.5 [Optional Types]()
+    6.5 [Optional Types](#611-optional-types)
     
-    6.6 [Error Types]()
+    6.6 [Error Types](#612-error-types)
     
-    6.7 [Force Unwrapping and Force Casts]()
+    6.7 [Force Unwrapping and Force Casts](#613-force-unwrapping-and-force-casts)
     
-    6.8 [Implicitly Unwrapped Optionals]()
+    6.8 [Implicitly Unwrapped Optionals](#614-implicitly-unwrapped-optionals)
     
-    6.9 [Access Levels]()
+    6.9 [Access Levels](#615-access-levels)
     
-    6.10 [Nesting and Namespacing]()
+    6.10 [Nesting and Namespacing](#616-nesting-and-namespacing)
     
-    6.11 [guards for Early Exits]()
+    6.11 [guards for Early Exits](#617-guards-for-early-exits)
     
-    6.12 [for-where Loops]()
+    6.12 [for-where Loops](#618-for-where-loops)
     
-    6.13 [fallthrough in switch Statements]()
+    6.13 [fallthrough in switch Statements](#619-fallthrough-in-switch-statements)
     
-    6.14 [Pattern Matching]()
+    6.14 [Pattern Matching](#620-pattern-matching)
     
-    6.15 [Tuple Patterns]()
+    6.15 [Tuple Patterns](#621-tuple-patterns)
     
-    6.16 [Numeric and String Literals]()
+    6.16 [Numeric and String Literals](#47-numeric-literals)
     
-    6.17 [Playground Literals]()
+    6.17 [Playground Literals](#623-playground-literals)
     
-    6.18 [Trapping vs. Overflowing Arithmetic]()
+    6.18 [Trapping vs. Overflowing Arithmetic](#624-trapping-vs-overflowing-arithmetic)
     
-    6.19 [Defining New Operators]()
+    6.19 [Defining New Operators](#625-defining-new-operators)
 
     6.20 [Overloading Existing Operators]()
 
-7. [Documentation Comments]()
+7. [Documentation Comments](#7-documentation-comments)
     
-    7.1 [General Format]()
+    7.1 [General Format](#71-general-format)
     
-    7.2 [Single-Sentence Summary]()
+    7.2 [Single-Sentence Summary](#72-single-sentence-summary)
     
-    7.3 [Parameter, Returns, and Throws Tags]()
+    7.3 [Parameter, Returns, and Throws Tags](#73-parameter-returns-and-throws-tags)
     
-    7.4 [Apple’s Markup Format]()
+    7.4 [Apple’s Markup Format](#74-apples-markup-format)
     
-    7.5 [Where to Document]()
+    7.5 [Where to Document](#75-where-to-document)
 
 <!--
 8. [Implementation of ScribbleLabApp's Styling Guide]()
@@ -1945,7 +1945,18 @@ In the example above, defining specific error cases improves error handling and 
 
 ### 6.13 Force Unwrapping and Force Casts
 
-Avoid force unwrapping and force casts. Use safe unwrapping and casting techniques to prevent runtime crashes.
+Avoid force unwrapping and force casts except in specific scenarios:
+
+- `IBOutlets` in UIKit (they are guaranteed to be set after view loading)
+- Test code where the test would fail anyway if the value is nil
+- Resource loading where a crash is appropriate if the resource is missing
+
+In all other cases, use safe unwrapping and casting techniques to prevent runtime crashes:
+
+- Optional binding (`if let`, `guard let`)
+- Optional chaining
+- Nil coalescing operator
+- Type-safe casting (`as?`)
 
 ⛔️ <ins>Bad:</ins>
 
